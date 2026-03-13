@@ -1,0 +1,15 @@
+## Interface: 120000
+## Title: PuchiAssists: Midnight BiS
+## Notes: Muestra informacion BiS por clase para raids y dungeons de Midnight.
+## Author: danviles
+## Version: 0.1.0
+## SavedVariables: PuchiAssistsMidnightBiSDB
+## OptionalDeps: HandyNotes
+
+Core\Init.lua
+Core\ClassResolver.lua
+Core\Events.lua
+Data\BiSData.lua
+Data\MidnightSampleData.lua
+MapPins\MapPins.lua
+Tooltip\Tooltip.lua
