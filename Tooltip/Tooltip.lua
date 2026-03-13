@@ -56,6 +56,10 @@ function Tooltip:Init()
   end)
 end
 
+function Tooltip:SetEnabled(enabled)
+  self.enabled = not not enabled
+end
+
 function Tooltip:AppendBossBiS(tooltip, bossId, instanceId)
   if not self.enabled or not tooltip then
     return

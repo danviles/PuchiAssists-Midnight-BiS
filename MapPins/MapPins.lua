@@ -23,6 +23,10 @@ end
 local pluginHandler = {}
 
 function pluginHandler:GetNodes2(uiMapID)
+  if not ns.MapPins or not ns.MapPins.enabled then
+    return IterNodes, {}, nil
+  end
+
   local nodes = activeNodes[uiMapID]
   if not nodes then
     return IterNodes, {}, nil
@@ -123,15 +127,21 @@ function MapPins:Init()
   HandyNotes:RegisterPluginDB("PuchiAssists_MidnightBiS", pluginHandler, defaults)
 end
 
-function MapPins:Refresh()
-  if not self.enabled then
-    return
-  end
+function MapPins:SetEnabled(enabled)
+  self.enabled = not not enabled
+  self:Refresh()
+end
 
+function MapPins:Refresh()
   if not HandyNotes then
     return
   end
 
-  self:BuildNodes()
+  if self.enabled then
+    self:BuildNodes()
+  else
+    activeNodes = {}
+  end
+
   HandyNotes:SendMessage("HandyNotes_NotifyUpdate", "PuchiAssists_MidnightBiS")
 end

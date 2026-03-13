@@ -6,11 +6,70 @@ ns.version = "0.1.0"
 local addon = CreateFrame("Frame")
 ns.addon = addon
 
+local DEFAULT_CONFIG = {
+  mapPinsEnabled = true,
+  bossTooltipEnabled = true,
+}
+
 local function Print(msg)
   DEFAULT_CHAT_FRAME:AddMessage("|cff66ccffPuchiAssists|r: " .. tostring(msg))
 end
 
 ns.Print = Print
+
+local function EnsureConfig()
+  PuchiAssistsMidnightBiSDB = PuchiAssistsMidnightBiSDB or {}
+  PuchiAssistsMidnightBiSDB.config = PuchiAssistsMidnightBiSDB.config or {}
+
+  local config = PuchiAssistsMidnightBiSDB.config
+  for key, value in pairs(DEFAULT_CONFIG) do
+    if config[key] == nil then
+      config[key] = value
+    end
+  end
+
+  ns.config = config
+end
+
+local function ApplyConfig()
+  if ns.MapPins and ns.MapPins.SetEnabled then
+    ns.MapPins:SetEnabled(ns.config.mapPinsEnabled)
+  end
+
+  if ns.Tooltip and ns.Tooltip.SetEnabled then
+    ns.Tooltip:SetEnabled(ns.config.bossTooltipEnabled)
+  end
+end
+
+local function PrintStatus()
+  local classData = ns.ClassResolver and ns.ClassResolver:Get() or {}
+  local className = classData.classDisplayName or "N/D"
+  local classToken = classData.classToken or "N/D"
+  local specName = classData.specName or "Sin especializacion"
+
+  Print("Clase: " .. className .. " (" .. classToken .. ")")
+  Print("Spec: " .. specName)
+  Print("Pines de mapa: " .. (ns.config.mapPinsEnabled and "ON" or "OFF"))
+  Print("Tooltip de boss: " .. (ns.config.bossTooltipEnabled and "ON" or "OFF"))
+end
+
+local function PrintHelp()
+  Print("Uso: /puchi status")
+  Print("Uso: /puchi pines on|off")
+  Print("Uso: /puchi tooltip on|off")
+end
+
+local function ParseToggle(value)
+  if value == "on" or value == "1" then
+    return true
+  end
+
+  if value == "off" or value == "0" then
+    return false
+  end
+
+  return nil
+end
 
 addon:SetScript("OnEvent", function(_, event, ...)
   if event == "ADDON_LOADED" then
@@ -19,7 +78,7 @@ addon:SetScript("OnEvent", function(_, event, ...)
       return
     end
 
-    PuchiAssistsMidnightBiSDB = PuchiAssistsMidnightBiSDB or {}
+    EnsureConfig()
 
     if ns.ClassResolver and ns.ClassResolver.Init then
       ns.ClassResolver:Init()
@@ -32,6 +91,8 @@ addon:SetScript("OnEvent", function(_, event, ...)
     if ns.Tooltip and ns.Tooltip.Init then
       ns.Tooltip:Init()
     end
+
+    ApplyConfig()
   elseif event == "PLAYER_LOGIN" then
     if ns.ClassResolver and ns.ClassResolver.Refresh then
       ns.ClassResolver:Refresh()
@@ -53,17 +114,52 @@ addon:RegisterEvent("PLAYER_LOGIN")
 addon:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 SLASH_PUCHIASSIST1 = "/puchi"
-SlashCmdList.PUCHIASSIST = function()
-  if not ns.ClassResolver then
-    Print("ClassResolver no disponible.")
+SlashCmdList.PUCHIASSIST = function(msg)
+  local text = tostring(msg or ""):lower()
+  local command, value = string.match(text, "^(%S+)%s*(%S*)$")
+  command = command or "status"
+
+  if not ns.config then
+    Print("Configuracion aun no disponible.")
     return
   end
 
-  local classData = ns.ClassResolver:Get()
-  local className = classData.classDisplayName or "N/D"
-  local classToken = classData.classToken or "N/D"
-  local specName = classData.specName or "Sin especializacion"
+  if command == "status" then
+    PrintStatus()
+    return
+  end
 
-  Print("Clase: " .. className .. " (" .. classToken .. ")")
-  Print("Spec: " .. specName)
+  if command == "pines" then
+    local enabled = ParseToggle(value)
+    if enabled == nil then
+      Print("Valor invalido para pines. Usa on|off")
+      return
+    end
+
+    ns.config.mapPinsEnabled = enabled
+    if ns.MapPins and ns.MapPins.SetEnabled then
+      ns.MapPins:SetEnabled(enabled)
+    end
+
+    Print("Pines de mapa: " .. (enabled and "ON" or "OFF"))
+    return
+  end
+
+  if command == "tooltip" then
+    local enabled = ParseToggle(value)
+    if enabled == nil then
+      Print("Valor invalido para tooltip. Usa on|off")
+      return
+    end
+
+    ns.config.bossTooltipEnabled = enabled
+    if ns.Tooltip and ns.Tooltip.SetEnabled then
+      ns.Tooltip:SetEnabled(enabled)
+    end
+
+    Print("Tooltip de boss: " .. (enabled and "ON" or "OFF"))
+    return
+  end
+
+  PrintHelp()
 end

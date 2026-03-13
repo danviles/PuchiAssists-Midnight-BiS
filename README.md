@@ -116,7 +116,7 @@ BIS_DATA = {
 - [x] Mostrar loot BiS filtrado por clase/spec.
 
 ### Fase 5 — Configuración y UX
-- [ ] Opciones básicas (`/puchi`): activar/desactivar pines y tooltips.
+- [x] Opciones básicas (`/puchi`): activar/desactivar pines y tooltips.
 - [ ] Formato de tooltip legible (slots, dificultad, orden por prioridad).
 - [ ] Localización inicial ES/EN.
 
@@ -145,7 +145,14 @@ BIS_DATA = {
 ---
 
 ## Próximos pasos inmediatos
-1. Implementar hook inicial de tooltip para bosses.
-2. Añadir configuración básica (`/puchi`) para activar/desactivar módulos.
-3. Validar IDs de mapa y bosses de Midnight con datos finales de juego.
-4. Reemplazar dataset de ejemplo por datos reales de temporada.
+1. Validar IDs de mapa y bosses de Midnight con datos finales de juego.
+2. Reemplazar dataset de ejemplo por datos reales de temporada.
+3. Mejorar formato visual del tooltip (orden y prioridad de items).
+4. Añadir localización ES/EN para textos de UI.
+
+---
+
+## Comandos disponibles
+- `/puchi status`: muestra clase/spec actual y estado de modulos.
+- `/puchi pines on|off`: activa o desactiva pines de mapa.
+- `/puchi tooltip on|off`: activa o desactiva tooltip BiS en bosses.
