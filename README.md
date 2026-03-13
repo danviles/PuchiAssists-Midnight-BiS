@@ -93,27 +93,27 @@ BIS_DATA = {
 ### Fase 0 — Definición y preparación
 - [ ] Confirmar listado final de raids y dungeons de Midnight.
 - [ ] Definir clases/specs objetivo para primera entrega.
-- [ ] Crear estructura base del addon (`.toc`, `Core`, `Data`, `MapPins`, `Tooltip`).
+- [x] Crear estructura base del addon (`.toc`, `Core`, `Data`, `MapPins`, `Tooltip`).
 
 ### Fase 1 — Núcleo técnico
-- [ ] Inicialización del addon y registro de eventos.
-- [ ] Resolver clase del jugador de forma robusta.
+- [x] Inicialización del addon y registro de eventos.
+- [x] Resolver clase del jugador de forma robusta.
 - [ ] Logging/debug básico activable por configuración.
 
 ### Fase 2 — Datos BiS
 - [ ] Diseñar esquema final de datos.
-- [ ] Cargar dataset inicial (al menos 1 raid + 1 dungeon para pruebas).
+- [x] Cargar dataset inicial (al menos 1 raid + 1 dungeon para pruebas).
 - [ ] Validaciones de consistencia (bosses, item IDs, clases/specs).
 
 ### Fase 3 — Mapa de instancias
-- [ ] Dibujar iconos en mapa de mundo.
-- [ ] Tooltip de pin con resumen BiS para clase activa.
+- [x] Dibujar iconos en mapa de mundo.
+- [x] Tooltip de pin con resumen BiS para clase activa.
 - [ ] Ajustes de rendimiento (evitar reconstrucción excesiva de tooltip).
 
 ### Fase 4 — Tooltip de boss en instancia
-- [ ] Hook del tooltip de unidad/boss.
-- [ ] Match de boss por nombre/ID.
-- [ ] Mostrar loot BiS filtrado por clase/spec.
+- [x] Hook del tooltip de unidad/boss.
+- [x] Match de boss por nombre/ID.
+- [x] Mostrar loot BiS filtrado por clase/spec.
 
 ### Fase 5 — Configuración y UX
 - [ ] Opciones básicas (`/puchi`): activar/desactivar pines y tooltips.
@@ -145,7 +145,7 @@ BIS_DATA = {
 ---
 
 ## Próximos pasos inmediatos
-1. Crear el esqueleto técnico del addon (`.toc` + archivos base).
-2. Implementar `ClassResolver` y comando de prueba para validar clase/spec.
-3. Cargar un dataset mínimo de ejemplo para una raid y una dungeon.
-4. Implementar primer prototipo de tooltip en mapa.
+1. Implementar hook inicial de tooltip para bosses.
+2. Añadir configuración básica (`/puchi`) para activar/desactivar módulos.
+3. Validar IDs de mapa y bosses de Midnight con datos finales de juego.
+4. Reemplazar dataset de ejemplo por datos reales de temporada.
