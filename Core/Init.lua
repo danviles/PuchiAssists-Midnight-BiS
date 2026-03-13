@@ -61,6 +61,7 @@ local function PrintHelp()
   Print("Uso: /puchi tooltip on|off")
   Print("Uso: /puchi mapid")
   Print("Uso: /puchi testpin on|off")
+  Print("Uso: /puchi pinstats")
 end
 
 local function ParseToggle(value)
@@ -187,6 +188,22 @@ SlashCmdList.PUCHIASSIST = function(msg)
     end
 
     Print("Debug test pin: " .. (enabled and "ON" or "OFF"))
+    return
+  end
+
+  if command == "pinstats" then
+    local mapID = C_Map.GetBestMapForUnit("player")
+    if not ns.MapPins or not ns.MapPins.GetStatsForMap then
+      Print("MapPins no disponible.")
+      return
+    end
+
+    local stats = ns.MapPins:GetStatsForMap(mapID)
+    Print("HandyNotes: " .. (stats.hasHandyNotes and "OK" or "NO"))
+    Print("MapPins enabled: " .. (stats.enabled and "ON" or "OFF"))
+    Print("MapID actual: " .. tostring(stats.mapID or "N/D"))
+    Print("Mapas con nodos: " .. tostring(stats.totalMaps))
+    Print("Nodos en mapa actual: " .. tostring(stats.nodesOnMap))
     return
   end
 

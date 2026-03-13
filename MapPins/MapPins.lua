@@ -13,6 +13,31 @@ local function PackCoord(x, y)
   return xCoord * 10000 + yCoord
 end
 
+local function NormalizeCoord(value)
+  if not value then
+    return nil
+  end
+
+  local numberValue = tonumber(value)
+  if not numberValue then
+    return nil
+  end
+
+  if numberValue > 1 then
+    numberValue = numberValue / 100
+  end
+
+  if numberValue < 0 then
+    return 0
+  end
+
+  if numberValue > 1 then
+    return 1
+  end
+
+  return numberValue
+end
+
 local function IterNodes(t, prev)
   local coord, node = next(t, prev)
   if not coord then
@@ -144,9 +169,12 @@ function MapPins:BuildNodes()
 
   for instanceId, instance in pairs(ns.BiSData:GetInstances() or {}) do
     local mapID = instance.displayMapID or instance.uiMapID
-    if mapID and instance.x and instance.y then
+    local normalizedX = NormalizeCoord(instance.x)
+    local normalizedY = NormalizeCoord(instance.y)
+
+    if mapID and normalizedX and normalizedY then
       activeNodes[mapID] = activeNodes[mapID] or {}
-      local coord = PackCoord(instance.x, instance.y)
+      local coord = PackCoord(normalizedX, normalizedY)
 
       activeNodes[mapID][coord] = {
         instanceId = instanceId,
@@ -187,6 +215,28 @@ function MapPins:SetDebugCurrentMapPin(enabled)
 
   ns.config.debugCurrentMapPin = not not enabled
   self:Refresh()
+end
+
+function MapPins:GetStatsForMap(uiMapID)
+  local stats = {
+    enabled = self.enabled,
+    hasHandyNotes = not not HandyNotes,
+    mapID = uiMapID,
+    totalMaps = 0,
+    nodesOnMap = 0,
+  }
+
+  for _, nodes in pairs(activeNodes) do
+    stats.totalMaps = stats.totalMaps + 1
+  end
+
+  if uiMapID and activeNodes[uiMapID] then
+    for _ in pairs(activeNodes[uiMapID]) do
+      stats.nodesOnMap = stats.nodesOnMap + 1
+    end
+  end
+
+  return stats
 end
 
 function MapPins:Refresh()
