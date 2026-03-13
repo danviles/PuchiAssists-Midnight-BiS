@@ -4,6 +4,8 @@ local MapPins = {}
 ns.MapPins = MapPins
 
 local activeNodes = {}
+local DEFAULT_DUNGEON_ICON = "Interface\\MINIMAP\\TRACKING\\Dungeon"
+local DEFAULT_RAID_ICON = "Interface\\MINIMAP\\TRACKING\\Raid"
 
 local function PackCoord(x, y)
   local xCoord = math.floor(x * 10000 + 0.5)
@@ -94,6 +96,49 @@ local defaults = {
   icon_alpha = 1.0,
 }
 
+local function GetInstanceIcon(instance)
+  if instance and instance.type == "raid" then
+    return DEFAULT_RAID_ICON
+  end
+
+  return DEFAULT_DUNGEON_ICON
+end
+
+function MapPins:AddDebugCurrentMapNode()
+  if not ns.config or not ns.config.debugCurrentMapPin then
+    return
+  end
+
+  local mapID = C_Map.GetBestMapForUnit("player")
+  if not mapID then
+    return
+  end
+
+  local x = 0.5
+  local y = 0.5
+  local playerPos = C_Map.GetPlayerMapPosition(mapID, "player")
+  if playerPos then
+    x = playerPos.x or x
+    y = playerPos.y or y
+  end
+
+  activeNodes[mapID] = activeNodes[mapID] or {}
+  local coord = PackCoord(x, y)
+
+  activeNodes[mapID][coord] = {
+    instanceId = "debug_current_map",
+    instance = {
+      id = "debug_current_map",
+      name = "PuchiAssists Debug Pin",
+      type = "dungeon",
+      bosses = {},
+    },
+    icon = DEFAULT_DUNGEON_ICON,
+    scale = defaults.icon_scale,
+    alpha = defaults.icon_alpha,
+  }
+end
+
 function MapPins:BuildNodes()
   activeNodes = {}
 
@@ -105,12 +150,14 @@ function MapPins:BuildNodes()
       activeNodes[instance.uiMapID][coord] = {
         instanceId = instanceId,
         instance = instance,
-        icon = instance.icon or "Interface\\MINIMAP\\TRACKING\\Dungeon",
+        icon = GetInstanceIcon(instance),
         scale = defaults.icon_scale,
         alpha = defaults.icon_alpha,
       }
     end
   end
+
+  self:AddDebugCurrentMapNode()
 end
 
 function MapPins:Init()
@@ -129,6 +176,15 @@ end
 
 function MapPins:SetEnabled(enabled)
   self.enabled = not not enabled
+  self:Refresh()
+end
+
+function MapPins:SetDebugCurrentMapPin(enabled)
+  if not ns.config then
+    return
+  end
+
+  ns.config.debugCurrentMapPin = not not enabled
   self:Refresh()
 end
 

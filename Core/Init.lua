@@ -9,6 +9,7 @@ ns.addon = addon
 local DEFAULT_CONFIG = {
   mapPinsEnabled = true,
   bossTooltipEnabled = true,
+  debugCurrentMapPin = false,
 }
 
 local function Print(msg)
@@ -51,12 +52,15 @@ local function PrintStatus()
   Print("Spec: " .. specName)
   Print("Pines de mapa: " .. (ns.config.mapPinsEnabled and "ON" or "OFF"))
   Print("Tooltip de boss: " .. (ns.config.bossTooltipEnabled and "ON" or "OFF"))
+  Print("Debug test pin: " .. (ns.config.debugCurrentMapPin and "ON" or "OFF"))
 end
 
 local function PrintHelp()
   Print("Uso: /puchi status")
   Print("Uso: /puchi pines on|off")
   Print("Uso: /puchi tooltip on|off")
+  Print("Uso: /puchi mapid")
+  Print("Uso: /puchi testpin on|off")
 end
 
 local function ParseToggle(value)
@@ -158,6 +162,31 @@ SlashCmdList.PUCHIASSIST = function(msg)
     end
 
     Print("Tooltip de boss: " .. (enabled and "ON" or "OFF"))
+    return
+  end
+
+  if command == "mapid" then
+    local mapID = C_Map.GetBestMapForUnit("player")
+    local instanceName, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID = GetInstanceInfo()
+    Print("MapID jugador: " .. tostring(mapID or "N/D"))
+    Print("Instancia: " .. tostring(instanceName or "N/D") .. " | tipo: " .. tostring(instanceType or "N/D"))
+    Print("InstanceMapID: " .. tostring(instanceMapID or "N/D") .. " | dificultad: " .. tostring(difficultyName or difficultyID or "N/D"))
+    return
+  end
+
+  if command == "testpin" then
+    local enabled = ParseToggle(value)
+    if enabled == nil then
+      Print("Valor invalido para testpin. Usa on|off")
+      return
+    end
+
+    ns.config.debugCurrentMapPin = enabled
+    if ns.MapPins and ns.MapPins.SetDebugCurrentMapPin then
+      ns.MapPins:SetDebugCurrentMapPin(enabled)
+    end
+
+    Print("Debug test pin: " .. (enabled and "ON" or "OFF"))
     return
   end
 

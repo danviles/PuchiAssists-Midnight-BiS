@@ -156,3 +156,5 @@ BIS_DATA = {
 - `/puchi status`: muestra clase/spec actual y estado de modulos.
 - `/puchi pines on|off`: activa o desactiva pines de mapa.
 - `/puchi tooltip on|off`: activa o desactiva tooltip BiS en bosses.
+- `/puchi mapid`: muestra `MapID` actual y datos de instancia para diagnostico.
+- `/puchi testpin on|off`: crea un pin de prueba en el mapa actual.
