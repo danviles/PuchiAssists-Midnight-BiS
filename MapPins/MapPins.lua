@@ -4,8 +4,23 @@ local MapPins = {}
 ns.MapPins = MapPins
 
 local activeNodes = {}
-local DEFAULT_DUNGEON_ICON = "Interface\\MINIMAP\\TRACKING\\Dungeon"
-local DEFAULT_RAID_ICON = "Interface\\MINIMAP\\TRACKING\\Raid"
+local DEFAULT_PIN_ICON = {
+  icon = 134400,
+}
+local DEFAULT_RAID_PIN_ICON = {
+  icon = 134400,
+  r = 1,
+  g = 0.82,
+  b = 0.2,
+  a = 1,
+}
+local DEFAULT_DUNGEON_PIN_ICON = {
+  icon = 134400,
+  r = 0.35,
+  g = 0.8,
+  b = 1,
+  a = 1,
+}
 
 local function PackCoord(x, y)
   local xCoord = math.floor(x * 10000 + 0.5)
@@ -117,17 +132,17 @@ function pluginHandler:OnRelease()
 end
 
 local defaults = {
-  icon_scale = 1.0,
+  icon_scale = 1.5,
   icon_alpha = 1.0,
 }
 local PLUGIN_NAME = "PuchiAssists_MidnightBiS"
 
 local function GetInstanceIcon(instance)
   if instance and instance.type == "raid" then
-    return DEFAULT_RAID_ICON
+    return DEFAULT_RAID_PIN_ICON
   end
 
-  return DEFAULT_DUNGEON_ICON
+  return DEFAULT_DUNGEON_PIN_ICON
 end
 
 function MapPins:AddDebugCurrentMapNode()
@@ -159,8 +174,8 @@ function MapPins:AddDebugCurrentMapNode()
       type = "dungeon",
       bosses = {},
     },
-    icon = DEFAULT_DUNGEON_ICON,
-    scale = defaults.icon_scale,
+    icon = DEFAULT_PIN_ICON,
+    scale = 1.4,
     alpha = defaults.icon_alpha,
   }
 end
@@ -197,7 +212,7 @@ function MapPins:BuildNodes()
         instanceId = instanceId,
         instance = instance,
         icon = GetInstanceIcon(instance),
-        scale = defaults.icon_scale,
+        scale = 1.4,
         alpha = defaults.icon_alpha,
       }
     end
