@@ -62,6 +62,7 @@ local function PrintHelp()
   Print("Uso: /puchi mapid")
   Print("Uso: /puchi testpin on|off")
   Print("Uso: /puchi pinstats")
+  Print("Uso: /puchi hnfix")
 end
 
 local function ParseToggle(value)
@@ -204,6 +205,25 @@ SlashCmdList.PUCHIASSIST = function(msg)
     Print("MapID actual: " .. tostring(stats.mapID or "N/D"))
     Print("Mapas con nodos: " .. tostring(stats.totalMaps))
     Print("Nodos en mapa actual: " .. tostring(stats.nodesOnMap))
+    return
+  end
+
+  if command == "hnfix" then
+    if not ns.MapPins then
+      Print("MapPins no disponible.")
+      return
+    end
+
+    local changed = false
+    if ns.MapPins.EnsureHandyNotesPluginEnabled then
+      changed = ns.MapPins:EnsureHandyNotesPluginEnabled()
+    end
+
+    if ns.MapPins.Refresh then
+      ns.MapPins:Refresh()
+    end
+
+    Print("HandyNotes plugin PuchiAssists: " .. (changed and "activado" or "ya estaba activo"))
     return
   end
 

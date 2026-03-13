@@ -120,6 +120,7 @@ local defaults = {
   icon_scale = 1.0,
   icon_alpha = 1.0,
 }
+local PLUGIN_NAME = "PuchiAssists_MidnightBiS"
 
 local function GetInstanceIcon(instance)
   if instance and instance.type == "raid" then
@@ -164,6 +165,22 @@ function MapPins:AddDebugCurrentMapNode()
   }
 end
 
+function MapPins:EnsureHandyNotesPluginEnabled()
+  if not HandyNotes or not HandyNotes.db or not HandyNotes.db.profile then
+    return false
+  end
+
+  local profile = HandyNotes.db.profile
+  profile.enabledPlugins = profile.enabledPlugins or {}
+
+  if profile.enabledPlugins[PLUGIN_NAME] then
+    return false
+  end
+
+  profile.enabledPlugins[PLUGIN_NAME] = true
+  return true
+end
+
 function MapPins:BuildNodes()
   activeNodes = {}
 
@@ -200,7 +217,9 @@ function MapPins:Init()
   end
 
   self:BuildNodes()
-  HandyNotes:RegisterPluginDB("PuchiAssists_MidnightBiS", pluginHandler, defaults)
+  HandyNotes:RegisterPluginDB(PLUGIN_NAME, pluginHandler, defaults)
+  self:EnsureHandyNotesPluginEnabled()
+  HandyNotes:SendMessage("HandyNotes_NotifyUpdate", PLUGIN_NAME)
 end
 
 function MapPins:SetEnabled(enabled)
@@ -244,11 +263,13 @@ function MapPins:Refresh()
     return
   end
 
+  self:EnsureHandyNotesPluginEnabled()
+
   if self.enabled then
     self:BuildNodes()
   else
     activeNodes = {}
   end
 
-  HandyNotes:SendMessage("HandyNotes_NotifyUpdate", "PuchiAssists_MidnightBiS")
+  HandyNotes:SendMessage("HandyNotes_NotifyUpdate", PLUGIN_NAME)
 end
