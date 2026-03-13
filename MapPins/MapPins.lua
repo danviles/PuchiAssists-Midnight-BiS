@@ -143,11 +143,12 @@ function MapPins:BuildNodes()
   activeNodes = {}
 
   for instanceId, instance in pairs(ns.BiSData:GetInstances() or {}) do
-    if instance.uiMapID and instance.x and instance.y then
-      activeNodes[instance.uiMapID] = activeNodes[instance.uiMapID] or {}
+    local mapID = instance.displayMapID or instance.uiMapID
+    if mapID and instance.x and instance.y then
+      activeNodes[mapID] = activeNodes[mapID] or {}
       local coord = PackCoord(instance.x, instance.y)
 
-      activeNodes[instance.uiMapID][coord] = {
+      activeNodes[mapID][coord] = {
         instanceId = instanceId,
         instance = instance,
         icon = GetInstanceIcon(instance),
