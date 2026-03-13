@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Lua tooling (optional)
+.luarocks/
+.rocks/
+
+# Build / package artifacts
+*.zip
+*.tar
+*.tar.gz
+release/
+dist/
+
+# Logs
+*.log
