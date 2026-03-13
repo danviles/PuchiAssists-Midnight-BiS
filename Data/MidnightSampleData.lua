@@ -1,6 +1,29 @@
 local _, ns = ...
 
 local instances = {
+  manual_test_pin = {
+    id = "manual_test_pin",
+    name = "Manual Test Pin (50,70)",
+    type = "dungeon",
+    uiMapID = 2393,
+    displayMapID = 2393,
+    x = 0.5000,
+    y = 0.7000,
+    bosses = {
+      test_boss = {
+        id = "test_boss",
+        name = "Test Boss",
+        npcId = 999999,
+        loot = {
+          WARLOCK = {
+            ALL = {
+              { itemId = 239201, name = "Manual Test Relic", slot = "TRINKET", difficulty = "TEST" },
+            },
+          },
+        },
+      },
+    },
+  },
   dreamrift_raid = {
     id = "dreamrift_raid",
     name = "The Dreamrift",
