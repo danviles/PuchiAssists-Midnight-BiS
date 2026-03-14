@@ -1,0 +1,92 @@
+[
+  {
+    "slot": "Weapon",
+    "name": "Final Grade",
+    "itemId": 193707,
+    "source": "Algeth'ar Academy"
+  },
+  {
+    "slot": "Head",
+    "name": "Abyssal Immolator's Smoldering Flames",
+    "itemId": 250042,
+    "source": "Tier Set"
+  },
+  {
+    "slot": "Neck",
+    "name": "Barbed Ymirheim Choker",
+    "itemId": 50228,
+    "source": "Pit of Saron"
+  },
+  {
+    "slot": "Shoulders",
+    "name": "Mantle of Dark Devotion",
+    "itemId": 251085,
+    "source": "Windrunner Spire"
+  },
+  {
+    "slot": "Cloak",
+    "name": "Adherent's Silken Shroud",
+    "itemId": 239656,
+    "source": "Crafting"
+  },
+  {
+    "slot": "Chest",
+    "name": "Abyssal Immolator's Dreadrobe",
+    "itemId": 250045,
+    "source": "Tier Set"
+  },
+  {
+    "slot": "Wrist",
+    "name": "Voracious Wristwraps",
+    "itemId": 249315,
+    "source": "Vorasius"
+  },
+  {
+    "slot": "Gloves",
+    "name": "Abyssal Immolator's Grasps",
+    "itemId": 250043,
+    "source": "Tier Set"
+  },
+  {
+    "slot": "Belt",
+    "name": "Whisper-Inscribed Sash",
+    "itemId": 249376,
+    "source": "Belo'ren"
+  },
+  {
+    "slot": "Legs",
+    "name": "Abyssal Immolator's Pillars",
+    "itemId": 250041,
+    "source": "Tier Set"
+  },
+  {
+    "slot": "Boots",
+    "name": "Dream-Scorched Striders",
+    "itemId": 249373,
+    "source": "Chimaerus"
+  },
+  {
+    "slot": "Ring",
+    "name": "Eye of Midnight",
+    "itemId": 249920,
+    "source": "Midnight Falls"
+  },
+  {
+    "slot": "Ring",
+    "name": "Signet of Azerothian Blessings",
+    "itemId": 241140,
+    "source": "Crafting"
+  },
+  {
+    "slot": "Trinket",
+    "name": "Gaze of the Alnseer",
+    "itemId": 249343,
+    "source": "Chimaerus"
+  },
+  {
+    "slot": "Trinket",
+    "name": "Shadow of the Empyrean Requiem",
+    "itemId": 249810,
+    "source": "Midnight Falls"
+  }
+]

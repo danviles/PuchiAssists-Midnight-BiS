@@ -62,6 +62,27 @@ local function IterNodes(t, prev)
   return coord, nil, node.icon, node.scale, node.alpha
 end
 
+local function GetOrderedBossList(instance)
+  local ordered = {}
+  for bossId, bossData in pairs((instance and instance.bosses) or {}) do
+    ordered[#ordered + 1] = {
+      bossId = bossId,
+      bossData = bossData,
+      order = bossData.bossesOrder or 999,
+    }
+  end
+
+  table.sort(ordered, function(a, b)
+    if a.order == b.order then
+      return tostring(a.bossData.name or a.bossId) < tostring(b.bossData.name or b.bossId)
+    end
+
+    return a.order < b.order
+  end)
+
+  return ordered
+end
+
 local pluginHandler = {}
 
 function pluginHandler:GetNodes2(uiMapID)
@@ -88,35 +109,10 @@ function pluginHandler:OnEnter(uiMapID, coord)
     return
   end
 
-  local classInfo = ns.ClassResolver and ns.ClassResolver:Get() or {}
-  local classToken = classInfo.classToken
-  local specName = classInfo.specName
-
   GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
   GameTooltip:SetText(node.instance.name or "Instancia", 1, 0.82, 0)
-  GameTooltip:AddLine((node.instance.type == "raid" and "Raid" or "Dungeon") .. " | Clase: " .. (classToken or "N/D"), 0.8, 0.8, 0.8)
-
-  local hasAnyBiS = false
-  for bossId, bossData in pairs(node.instance.bosses or {}) do
-    local items = ns.BiSData:GetItemsForBossByClass(node.instance.id, bossId, classToken, specName)
-    if items and #items > 0 then
-      hasAnyBiS = true
-      GameTooltip:AddLine(" ")
-      GameTooltip:AddLine(bossData.name or bossId, 0.4, 0.8, 1)
-
-      for _, item in ipairs(items) do
-        local itemName = ns.BiSData:GetItemDisplayName(item)
-        local slot = item.slot or "N/D"
-        local difficulty = item.difficulty or "N/D"
-        GameTooltip:AddLine("- " .. itemName .. " [" .. slot .. "] {" .. difficulty .. "}", 1, 1, 1)
-      end
-    end
-  end
-
-  if not hasAnyBiS then
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine("Sin BiS registrado para tu clase/spec.", 0.7, 0.7, 0.7)
-  end
+  GameTooltip:AddLine((node.instance.type == "raid" and "Raid" or "Dungeon"), 0.8, 0.8, 0.8)
+  GameTooltip:AddLine("Haz click izquierdo para ver BiS.", 0.4, 0.8, 1)
 
   GameTooltip:Show()
 end
@@ -125,7 +121,24 @@ function pluginHandler:OnLeave()
   GameTooltip:Hide()
 end
 
-function pluginHandler:OnClick()
+function pluginHandler:OnClick(button, down, uiMapID, coord)
+  if down or button ~= "LeftButton" then
+    return
+  end
+
+  local mapNodes = activeNodes[uiMapID]
+  if not mapNodes then
+    return
+  end
+
+  local node = mapNodes[coord]
+  if not node or not node.instance then
+    return
+  end
+
+  if ns.UI and ns.UI.InstanceWindow and ns.UI.InstanceWindow.Open then
+    ns.UI.InstanceWindow:Open(node.instance)
+  end
 end
 
 function pluginHandler:OnRelease()
@@ -222,12 +235,10 @@ function MapPins:BuildNodes()
 end
 
 function MapPins:Init()
+  self.initialized = true
   self.enabled = true
 
   if not HandyNotes then
-    if ns.Print then
-      ns.Print("HandyNotes no esta cargado. Los pines de mapa no se mostraran.")
-    end
     return
   end
 

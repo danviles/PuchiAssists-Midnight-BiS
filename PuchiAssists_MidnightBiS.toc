@@ -9,7 +9,13 @@
 Core\Init.lua
 Core\ClassResolver.lua
 Core\Events.lua
+Core\EJProvider.lua
+Core\CursorMapTooltip.lua
 Data\BiSData.lua
 Data\MidnightSampleData.lua
+UI\InstanceWindow.lua
+Map\WorldMapMenu.lua
+Map\InstanceHotspots.lua
 MapPins\MapPins.lua
+Tooltip\MapPoiTooltip.lua
 Tooltip\Tooltip.lua

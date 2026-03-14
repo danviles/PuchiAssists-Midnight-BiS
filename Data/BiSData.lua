@@ -91,7 +91,7 @@ function ns.BiSData:FindBoss(instanceId, bossName, npcId)
   return self:FindBossByName(instanceId, bossName)
 end
 
-function ns.BiSData:GetItemsForBossByClass(instanceId, bossId, classToken, specName)
+function ns.BiSData:GetItemsForBossByClass(instanceId, bossId, classToken, specName, specId)
   local instance = self.instances[instanceId]
   if not instance or not instance.bosses then
     return nil
@@ -105,6 +105,13 @@ function ns.BiSData:GetItemsForBossByClass(instanceId, bossId, classToken, specN
   local classData = boss.loot[classToken]
   if not classData then
     return nil
+  end
+
+  if specId then
+    local specKey = "SPEC_" .. tostring(specId)
+    if classData[specKey] then
+      return classData[specKey]
+    end
   end
 
   if specName and classData[specName] then
