@@ -7,6 +7,7 @@ local cache = {
   classToken = nil,
   classDisplayName = nil,
   classFileName = nil,
+  classId = nil,
   specId = nil,
   specName = nil,
 }

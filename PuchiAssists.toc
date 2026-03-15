@@ -1,0 +1,13 @@
+## Interface: 120000
+## Title: PuchiAssists
+## Notes: Acceso rapido a instancias de Midnight y su loot del Encounter Journal.
+## Author: danviles
+## Version: 1.0.0
+## SavedVariables: PuchiAssistsDB
+
+Core\ClassResolver.lua
+Core\Instances.lua
+Core\EJProvider.lua
+UI\InstanceWindow.lua
+Map\WorldMapMenu.lua
+Core\Init.lua
