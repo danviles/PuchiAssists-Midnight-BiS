@@ -9,5 +9,6 @@ Core\ClassResolver.lua
 Core\Instances.lua
 Core\EJProvider.lua
 UI\InstanceWindow.lua
+UI\BossTooltip.lua
 Map\WorldMapMenu.lua
 Core\Init.lua

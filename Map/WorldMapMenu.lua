@@ -170,7 +170,70 @@ function ns.MapHubMenu:GetDebugStatus()
     worldMapMapID = WorldMapFrame and WorldMapFrame.GetMapID and WorldMapFrame:GetMapID() or nil,
     buttonExists = self.button ~= nil,
     buttonShown = self.button and self.button:IsShown() or false,
+    testPinActive = self.testPin ~= nil,
   }
+end
+
+function ns.MapHubMenu:SetTestPin(enabled)
+  if not WorldMapFrame then
+    return
+  end
+
+  if not enabled then
+    if self.testPin then
+      self.testPin:Hide()
+      self.testPin = nil
+    end
+    return
+  end
+
+  local mapID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player") or nil
+  local x, y = 0.5, 0.5
+  if C_Map and C_Map.GetPlayerMapPosition and mapID then
+    local playerX, playerY = C_Map.GetPlayerMapPosition(mapID, "player")
+    if playerX and playerY then
+      x, y = playerX, playerY
+    end
+  end
+
+  if not self.testPin then
+    local parent = GetCanvasParent() or WorldMapFrame
+    local pin = CreateFrame("Frame", "PuchiAssistsTestPin", parent)
+    pin:SetSize(20, 20)
+    pin:SetFrameStrata("HIGH")
+    pin:SetFrameLevel((WorldMapFrame:GetFrameLevel() or 1) + 30)
+
+    pin.texture = pin:CreateTexture(nil, "ARTWORK")
+    pin.texture:SetAllPoints()
+    pin.texture:SetTexture([[Interface\Icons\INV_Misc_QuestionMark]])
+    pin.texture:SetVertexColor(1, 0.5, 0)
+
+    pin:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+      GameTooltip:SetText("PuchiAssists - Pin de prueba", 1, 0.5, 0)
+      GameTooltip:AddLine("MapID: " .. tostring(mapID or "N/D"), 0.8, 0.8, 0.8)
+      GameTooltip:AddLine(string.format("Coords: %.2f, %.2f", x, y), 0.8, 0.8, 0.8)
+      GameTooltip:Show()
+    end)
+    pin:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+    end)
+
+    self.testPin = pin
+  end
+
+  if WorldMapFrame.GetCanvas then
+    local canvas = WorldMapFrame:GetCanvas()
+    if canvas then
+      self.testPin:SetParent(canvas)
+    end
+  end
+
+  self.testPin:ClearAllPoints()
+  self.testPin:SetPoint("CENTER", WorldMapFrame, "TOPLEFT",
+    x * (WorldMapFrame:GetWidth() or 1024),
+    -(y * (WorldMapFrame:GetHeight() or 768)))
+  self.testPin:Show()
 end
 
 function ns.MapHubMenu:RefreshVisibility()
@@ -184,7 +247,8 @@ function ns.MapHubMenu:RefreshVisibility()
 
   UpdateButtonAnchor(self.button)
 
-  if WorldMapFrame and WorldMapFrame:IsShown() then
+  local showButton = ns.config and ns.config.showWorldMapButton ~= false
+  if showButton and WorldMapFrame and WorldMapFrame:IsShown() then
     self.button:Show()
   else
     self.button:Hide()

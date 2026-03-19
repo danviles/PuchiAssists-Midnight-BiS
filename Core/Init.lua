@@ -8,6 +8,7 @@ ns.addon = addon
 
 local DEFAULT_CONFIG = {
   showWorldMapButton = true,
+  showBossTooltip = true,
 }
 
 local function Print(message)
@@ -53,9 +54,14 @@ local function OpenEntryById(entryId)
 end
 
 local function PrintHelp()
-  Print("Uso: /puchi status")
-  Print("Uso: /puchi open <instance_id>")
-  Print("Uso: /puchi mapbutton")
+  Print("Comandos disponibles:")
+  Print("  /puchi status          - Muestra clase/spec y estado de modulos")
+  Print("  /puchi open <id>       - Abre ventana de loot de la instancia")
+  Print("  /puchi mapbutton       - Reinicia boton del mapa")
+  Print("  /puchi pines on|off    - Activa/desactiva boton en el mapa")
+  Print("  /puchi tooltip on|off  - Activa/desactiva tooltip BiS en bosses")
+  Print("  /puchi mapid           - Muestra MapID actual e info de instancia")
+  Print("  /puchi testpin on|off  - Crea/elimina un pin de prueba en el mapa")
 end
 
 addon:SetScript("OnEvent", function(_, event, ...)
@@ -69,6 +75,9 @@ addon:SetScript("OnEvent", function(_, event, ...)
       EnsureConfig()
       if ns.ClassResolver and ns.ClassResolver.Init then
         ns.ClassResolver:Init()
+      end
+      if ns.BossTooltip and ns.BossTooltip.Init then
+        ns.BossTooltip:Init()
       end
     end
 
@@ -87,6 +96,9 @@ addon:SetScript("OnEvent", function(_, event, ...)
     local unit = ...
     if unit == "player" and ns.ClassResolver and ns.ClassResolver.Refresh then
       ns.ClassResolver:Refresh()
+    end
+    if ns.BossTooltip and ns.BossTooltip.InvalidateCache then
+      ns.BossTooltip:InvalidateCache()
     end
   end
 end)
@@ -120,6 +132,72 @@ SlashCmdList.PUCHIASSIST = function(msg)
       ns.MapHubMenu:RefreshVisibility()
     end
     PrintStatus()
+    return
+  end
+
+  if command == "pines" then
+    local value = string.lower(rest or "")
+    if value == "on" then
+      ns.config.showWorldMapButton = true
+      Print("Pines en mapa: ACTIVADO")
+    elseif value == "off" then
+      ns.config.showWorldMapButton = false
+      Print("Pines en mapa: DESACTIVADO")
+    else
+      Print("Uso: /puchi pines on|off")
+    end
+    if ns.MapHubMenu and ns.MapHubMenu.RefreshVisibility then
+      ns.MapHubMenu:RefreshVisibility()
+    end
+    return
+  end
+
+  if command == "tooltip" then
+    local value = string.lower(rest or "")
+    if value == "on" then
+      ns.config.showBossTooltip = true
+      Print("Tooltip BiS en bosses: ACTIVADO")
+    elseif value == "off" then
+      ns.config.showBossTooltip = false
+      Print("Tooltip BiS en bosses: DESACTIVADO")
+    else
+      Print("Uso: /puchi tooltip on|off")
+    end
+    return
+  end
+
+  if command == "mapid" then
+    local mapID = C_Map and C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player") or nil
+    Print("MapID actual: " .. tostring(mapID or "N/D"))
+    if mapID and ns.Instances then
+      for _, entry in ipairs(ns.Instances:GetAll()) do
+        if entry.uiMapID == mapID then
+          Print("Instancia detectada: " .. tostring(ns.Instances:GetLocalizedName(entry)) .. " (" .. tostring(entry.id) .. ")")
+        end
+      end
+    end
+    return
+  end
+
+  if command == "testpin" then
+    local value = string.lower(rest or "")
+    if value == "on" then
+      if ns.MapHubMenu and ns.MapHubMenu.SetTestPin then
+        ns.MapHubMenu:SetTestPin(true)
+        Print("Pin de prueba: ACTIVADO")
+      else
+        Print("Funcion de pin de prueba no disponible.")
+      end
+    elseif value == "off" then
+      if ns.MapHubMenu and ns.MapHubMenu.SetTestPin then
+        ns.MapHubMenu:SetTestPin(false)
+        Print("Pin de prueba: DESACTIVADO")
+      else
+        Print("Funcion de pin de prueba no disponible.")
+      end
+    else
+      Print("Uso: /puchi testpin on|off")
+    end
     return
   end
 
